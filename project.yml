@@ -1,0 +1,22 @@
+name: FeedPlayer
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  FeedPlayer:
+    type: application
+    platform: iOS
+    sources: [FeedPlayer]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.feedplayer
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: FeedPlayer
+        TARGETED_DEVICE_FAMILY: "1,2"
+    info:
+      path: FeedPlayer/Info.plist
+      properties:
+        UIBackgroundModes: [audio]
+        UILaunchScreen: {}
