@@ -3,6 +3,8 @@ import SwiftUI
 struct PlayerView: View {
     @Environment(AudioPlayer.self) private var player
     @Environment(Library.self) private var library
+    @Environment(ToastCenter.self) private var toasts
+    @State private var appeared = false
     private let rates: [Float] = [0.75, 1.0, 1.25, 1.5, 2.0]
 
     var body: some View {
@@ -43,7 +45,7 @@ struct PlayerView: View {
                             Image(systemName: "gobackward.15").font(.system(size: 32))
                         }
                         Button { player.togglePlayPause() } label: {
-                            Image(systemName: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                            SwapIcon(name: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                                 .font(.system(size: 72))
                         }
                         Button { player.skip(by: 30) } label: {
@@ -52,11 +54,12 @@ struct PlayerView: View {
                     }
 
                     HStack(spacing: 28) {
-                    Button { library.toggleSaved(ep) } label: {
-                        Image(systemName: library.isSaved(ep) ? "bookmark.fill" : "bookmark")
-                            .font(.title3)
+                    SaveButton(isSaved: library.isSaved(ep)) {
+                        library.toggleSaved(ep)
+                        toasts.show(library.isSaved(ep) ? "Saved for later" : "Removed from Saved",
+                                    symbol: library.isSaved(ep) ? "bookmark.fill" : "bookmark.slash")
                     }
-                    .accessibilityLabel(library.isSaved(ep) ? "Remove from Saved" : "Save for Later")
+                    .font(.title3)
 
                     Menu {
                         ForEach(rates, id: \.self) { r in
@@ -66,7 +69,7 @@ struct PlayerView: View {
                             }
                         }
                     } label: {
-                        Text(rateLabel(player.rate))
+                        SwapText(rateLabel(player.rate))
                             .font(.subheadline.bold())
                             .padding(.horizontal, 14).padding(.vertical, 6)
                             .background(.secondary.opacity(0.15), in: Capsule())
@@ -87,6 +90,10 @@ struct PlayerView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
+                .scaleEffect(appeared ? 1 : 0.96)
+                .opacity(appeared ? 1 : 0)
+                .motion(Motion.modalOpen, value: appeared)
+                .onAppear { appeared = true }
             }
             .presentationDragIndicator(.hidden)
         }

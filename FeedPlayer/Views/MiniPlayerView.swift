@@ -10,10 +10,10 @@ struct MiniPlayerView: View {
                     .tint(.accentColor)
                 HStack(spacing: 12) {
                     Artwork(url: ep.imageURL, size: 44)
-                    Text(ep.title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                    SwapText(ep.title).font(.subheadline.weight(.semibold)).lineLimit(1)
                     Spacer()
                     Button { player.togglePlayPause() } label: {
-                        Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                        SwapIcon(name: player.isPlaying ? "pause.fill" : "play.fill")
                             .font(.title2).frame(width: 44, height: 44)
                     }
                     Button { player.skip(by: 30) } label: {

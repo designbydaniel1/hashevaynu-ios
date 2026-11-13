@@ -27,3 +27,7 @@ Option B: by hand
 Choose your Team under Signing, then run on a simulator or device.
 
 To use a different feed, change `FeedStore.feedURL`.
+
+## Credits
+Animations in `FeedPlayer/Views/Motion.swift` are SwiftUI ports of motion from
+[transitions.dev](https://transitions.dev) by Jakub Antalik, used under the Transitions.dev License.

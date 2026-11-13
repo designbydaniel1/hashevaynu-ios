@@ -26,7 +26,10 @@ struct LatestView: View {
             .overlay {
                 if feed.podcast == nil {
                     if feed.isLoading {
-                        ProgressView()
+                        List(0..<8, id: \.self) { _ in SkeletonRow() }
+                            .listStyle(.plain)
+                            .scrollDisabled(true)
+                            .transition(.reveal)
                     } else if let err = feed.errorMessage {
                         ContentUnavailableView {
                             Label("Couldn't load shiurim", systemImage: "wifi.exclamationmark")
@@ -36,6 +39,7 @@ struct LatestView: View {
                     }
                 }
             }
+            .motion(Motion.reveal, value: feed.podcast == nil)
             .withMiniPlayer()
         }
     }

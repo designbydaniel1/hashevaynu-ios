@@ -3,6 +3,7 @@ import UIKit
 
 struct MoreView: View {
     @State private var copiedZelle = false
+    @Environment(ToastCenter.self) private var toasts
 
     var body: some View {
         NavigationStack {
@@ -22,9 +23,10 @@ struct MoreView: View {
                     Button {
                         UIPasteboard.general.string = Links.zelleEmail
                         copiedZelle = true
+                        toasts.show("Zelle email copied", symbol: "doc.on.doc.fill")
                     } label: {
                         RowLabel(title: "Donate with Zelle",
-                                 detail: copiedZelle ? "Email copied ✓" : "Tap to copy \(Links.zelleEmail)",
+                                 detail: copiedZelle ? "Email copied" : "Tap to copy \(Links.zelleEmail)",
                                  symbol: "dollarsign.circle.fill")
                     }
                     LinkRow("Sponsor the Daf", detail: "$36/week or $100/month", symbol: "star.fill", url: Links.donate)
@@ -80,7 +82,7 @@ private struct RowLabel: View {
                 .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 7))
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).foregroundStyle(.primary)
-                if let detail { Text(detail).font(.caption).foregroundStyle(.secondary) }
+                if let detail { SwapText(detail).font(.caption).foregroundStyle(.secondary) }
             }
             Spacer()
             Image(systemName: "chevron.right").font(.caption.bold()).foregroundStyle(.tertiary)

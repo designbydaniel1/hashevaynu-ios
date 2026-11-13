@@ -14,6 +14,7 @@ struct RootView: View {
             MoreView()
                 .tabItem { Label("More", systemImage: "ellipsis.circle") }
         }
+        .overlay { ToastOverlay() }
         .task { await feed.refresh() }
     }
 }
@@ -26,9 +27,14 @@ struct MiniPlayerHost: ViewModifier {
     func body(content: Content) -> some View {
         content
             .safeAreaInset(edge: .bottom) {
-                if player.current != nil {
-                    MiniPlayerView().onTapGesture { showPlayer = true }
+                ZStack {
+                    if player.current != nil {
+                        MiniPlayerView()
+                            .onTapGesture { showPlayer = true }
+                            .transition(.toast)
+                    }
                 }
+                .motion(Motion.toastOpen, value: player.current != nil)
             }
             .sheet(isPresented: $showPlayer) { PlayerView() }
     }

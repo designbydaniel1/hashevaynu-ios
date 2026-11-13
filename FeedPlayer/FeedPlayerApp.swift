@@ -5,6 +5,7 @@ struct FeedPlayerApp: App {
     @State private var library: Library
     @State private var player: AudioPlayer
     @State private var feed = FeedStore()
+    @State private var toasts = ToastCenter()
 
     init() {
         let library = Library()
@@ -18,6 +19,7 @@ struct FeedPlayerApp: App {
                 .environment(player)
                 .environment(feed)
                 .environment(library)
+                .environment(toasts)
         }
     }
 }

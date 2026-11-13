@@ -4,6 +4,14 @@ struct EpisodeRow: View {
     let episode: Episode
     @Environment(AudioPlayer.self) private var player
     @Environment(Library.self) private var library
+    @Environment(ToastCenter.self) private var toasts
+
+    private func toggleSaved() {
+        library.toggleSaved(episode)
+        let saved = library.isSaved(episode)
+        toasts.show(saved ? "Saved for later" : "Removed from Saved",
+                    symbol: saved ? "bookmark.fill" : "bookmark.slash")
+    }
 
     private var isCurrent: Bool { player.current?.id == episode.id }
 
@@ -11,7 +19,7 @@ struct EpisodeRow: View {
         Button { player.play(episode) } label: { content }
             .buttonStyle(.plain)
             .swipeActions(edge: .trailing) {
-                Button { library.toggleSaved(episode) } label: {
+                Button { toggleSaved() } label: {
                     library.isSaved(episode)
                         ? Label("Unsave", systemImage: "bookmark.slash")
                         : Label("Save", systemImage: "bookmark")
@@ -28,7 +36,7 @@ struct EpisodeRow: View {
             }
             .contextMenu {
                 Button { player.play(episode) } label: { Label("Play", systemImage: "play") }
-                Button { library.toggleSaved(episode) } label: {
+                Button { toggleSaved() } label: {
                     library.isSaved(episode)
                         ? Label("Remove from Saved", systemImage: "bookmark.slash")
                         : Label("Save for Later", systemImage: "bookmark")
@@ -59,13 +67,16 @@ struct EpisodeRow: View {
                     if let dur = episode.duration { Text("· \(dur.clock)") }
                     if library.isSaved(episode) {
                         Image(systemName: "bookmark.fill").foregroundStyle(.orange)
+                            .transition(.iconSwap)
                     }
                 }
                 .font(.caption).foregroundStyle(.secondary)
+                .motion(Motion.iconSwap, value: library.isSaved(episode))
                 progressBar
+                    .motion(Motion.check, value: library.progress(for: episode) == 1)
             }
             Spacer()
-            Image(systemName: isCurrent && player.isPlaying ? "waveform" : "play.circle")
+            SwapIcon(name: isCurrent && player.isPlaying ? "waveform" : "play.circle")
                 .font(.title2)
                 .foregroundStyle(Color.accentColor)
                 .symbolEffect(.variableColor.iterative, isActive: isCurrent && player.isPlaying)
@@ -79,6 +90,7 @@ struct EpisodeRow: View {
             if p >= 1 {
                 Label("Played", systemImage: "checkmark.circle.fill")
                     .font(.caption2).foregroundStyle(.secondary)
+                    .transition(.successCheck)
             } else {
                 ProgressView(value: p).tint(.accentColor).frame(maxWidth: 120)
             }
