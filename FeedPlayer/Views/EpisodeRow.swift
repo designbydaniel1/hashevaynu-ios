@@ -56,7 +56,7 @@ struct EpisodeRow: View {
 
     private var content: some View {
         HStack(spacing: 12) {
-            Artwork(url: episode.imageURL, size: 56)
+            Artwork(url: episode.imageURL, size: 56, badge: episode.badge, tint: episode.tint)
             VStack(alignment: .leading, spacing: 4) {
                 Text(episode.title)
                     .font(.headline)
@@ -101,14 +101,24 @@ struct EpisodeRow: View {
 struct Artwork: View {
     let url: URL?
     let size: CGFloat
+    /// Designed tile shown when there is no artwork.
+    var badge: String? = nil
+    var tint: String? = nil
 
     var body: some View {
         AsyncImage(url: url) { image in
             image.resizable().scaledToFill()
         } placeholder: {
-            ZStack {
-                Color.secondary.opacity(0.2)
-                Image(systemName: "music.note").foregroundStyle(.secondary)
+            if let badge, url == nil {
+                ZStack {
+                    Color(hex: tint) ?? .accentColor
+                    Text(badge).font(.system(size: size * 0.32, weight: .heavy)).foregroundStyle(.white)
+                }
+            } else {
+                ZStack {
+                    Color.secondary.opacity(0.2)
+                    Image(systemName: "music.note").foregroundStyle(.secondary)
+                }
             }
         }
         .frame(width: size, height: size)

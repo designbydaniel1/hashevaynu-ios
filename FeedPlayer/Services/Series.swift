@@ -12,6 +12,13 @@ struct Series: Identifiable, Hashable {
     var episodes: [Episode]
     /// Playlist thumbnail from SoundCloud, when available.
     var artworkURL: URL? = nil
+    /// Section on the Series tab (daf, halacha, machshava, ...).
+    var category: String = ""
+    /// Designed tile: short text and colour (hex), used when there is no artwork.
+    var badge: String = ""
+    var tint: String? = nil
+    /// Shorter title for tiles, e.g. "Eirachin" for "33. Daf Yomi- Eirachin".
+    var shortName: String = ""
 }
 
 enum SeriesCatalog {

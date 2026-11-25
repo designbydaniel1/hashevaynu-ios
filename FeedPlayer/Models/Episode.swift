@@ -11,6 +11,9 @@ struct Episode: Identifiable, Hashable, Codable {
     var imageURL: URL?
     /// The track's page on SoundCloud — this is what gets shared.
     var link: URL?
+    /// Designed-tile text and colour (hex) for shiurim whose playlist has no artwork.
+    var badge: String? = nil
+    var tint: String? = nil
 }
 
 struct Podcast: Codable {
