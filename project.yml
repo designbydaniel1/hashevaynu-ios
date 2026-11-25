@@ -18,5 +18,6 @@ targets:
     info:
       path: FeedPlayer/Info.plist
       properties:
-        UIBackgroundModes: [audio]
+        UIBackgroundModes: [audio, fetch]
+        BGTaskSchedulerPermittedIdentifiers: [org.hashevaynu.app.refresh]
         UILaunchScreen: {}

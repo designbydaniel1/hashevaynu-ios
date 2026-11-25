@@ -18,6 +18,13 @@ struct RootView: View {
         .overlay { ToastOverlay() }
         .task { await feed.refresh() }
         .task { await playlists.refresh() }
+        .task {
+            NewShiurNotifier.schedule()
+            // Ask once, a moment after the first launch, with the standard iOS prompt.
+            guard !NewShiurNotifier.hasAsked else { return }
+            try? await Task.sleep(for: .seconds(3))
+            await NewShiurNotifier.requestPermission()
+        }
     }
 }
 

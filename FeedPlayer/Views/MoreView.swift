@@ -1,13 +1,46 @@
 import SwiftUI
 import UIKit
+import UserNotifications
 
 struct MoreView: View {
     @State private var copiedZelle = false
+    @State private var notify = NewShiurNotifier.enabled
+    @State private var notificationsBlocked = false
     @Environment(ToastCenter.self) private var toasts
 
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    Toggle(isOn: $notify) {
+                        HStack(spacing: 14) {
+                            Image(systemName: "bell.badge.fill")
+                                .foregroundStyle(.white)
+                                .frame(width: 30, height: 30)
+                                .background(Color.red, in: RoundedRectangle(cornerRadius: 7))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("New shiur alerts")
+                                Text("Once a day, when new shiurim are up").font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    if notify && notificationsBlocked {
+                        Button("Allow notifications in iPhone Settings") {
+                            if let url = URL(string: UIApplication.openNotificationSettingsURLString) { UIApplication.shared.open(url) }
+                        }
+                    }
+                } header: { Text("Notifications") } footer: {
+                    Text("At most one notification a day, only when something new was uploaded. Never on Shabbos.")
+                }
+                .onChange(of: notify) { _, on in
+                    NewShiurNotifier.enabled = on
+                    if on { Task { notificationsBlocked = !(await NewShiurNotifier.requestPermission()) } }
+                }
+                .task {
+                    let status = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+                    notificationsBlocked = status == .denied
+                }
+
                 Section {
                     LinkRow("Announcements & Schedule", detail: "Join the Hashevaynu WhatsApp group",
                             symbol: "megaphone.fill", url: Links.announcementsWhatsApp)

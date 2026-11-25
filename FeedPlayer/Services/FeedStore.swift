@@ -3,7 +3,7 @@ import Observation
 
 @MainActor @Observable
 final class FeedStore {
-    static let feedURL = URL(string: "https://feeds.soundcloud.com/users/soundcloud:users:749441560/sounds.rss")!
+    nonisolated static let feedURL = URL(string: "https://feeds.soundcloud.com/users/soundcloud:users:749441560/sounds.rss")!
 
     private(set) var podcast: Podcast?
     private(set) var isLoading = false
@@ -28,7 +28,9 @@ final class FeedStore {
             if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
                 throw URLError(.badServerResponse)
             }
-            podcast = try FeedParser.parse(data)
+            let parsed = try FeedParser.parse(data)
+            podcast = parsed
+            NewShiurNotifier.markSeen(parsed.episodes)
             try? data.write(to: cacheURL)
             errorMessage = nil
         } catch {

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LatestView: View {
     @Environment(FeedStore.self) private var feed
+    @Environment(PlaylistStore.self) private var playlists
     @State private var search = ""
 
     private var episodes: [Episode] {
@@ -22,7 +23,12 @@ struct LatestView: View {
             .navigationTitle("Hashevaynu")
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $search, prompt: "Search shiurim")
-            .refreshable { await feed.refresh() }
+            // Pull down to check for new shiurim and playlists right away.
+            .refreshable {
+                async let shiurim: Void = feed.refresh()
+                async let lists: Void = playlists.refresh()
+                _ = await (shiurim, lists)
+            }
             .overlay {
                 if feed.podcast == nil {
                     if feed.isLoading {

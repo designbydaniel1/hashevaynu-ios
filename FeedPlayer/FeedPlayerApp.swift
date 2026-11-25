@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 @main
 struct FeedPlayerApp: App {
@@ -8,7 +9,11 @@ struct FeedPlayerApp: App {
     @State private var toasts = ToastCenter()
     @State private var playlists = PlaylistStore()
 
+    private let notificationDelegate = NotificationDelegate()
+
     init() {
+        NewShiurNotifier.register()
+        UNUserNotificationCenter.current().delegate = notificationDelegate
         let library = Library()
         _library = State(initialValue: library)
         _player = State(initialValue: AudioPlayer(library: library))
