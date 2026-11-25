@@ -81,15 +81,15 @@ def big_artwork(url):
 
 # Sections for the Series tab, in display order, with the colour used for designed tiles.
 CATEGORIES = [
-    ("daf", "Daf Yomi", "#1D4E89"),
-    ("halacha", "Halacha", "#0F6B5C"),
     ("machshava", "Machshava & Mussar", "#4C3A8C"),
-    ("gemara", "Gemara", "#1F5F8B"),
+    ("halacha", "Halacha", "#0F6B5C"),
     ("yomtov", "Yomim Tovim", "#8A4B12"),
+    ("gemara", "Gemara", "#1F5F8B"),
+    ("daf", "Daf Yomi", "#1D4E89"),   # shown on the Daf tab
     ("more", "More", "#475569"),
 ]
 CATEGORY_WORDS = [
-    ("halacha", r"halach|mishnah berurah|basar|semicha|taaruvos"),
+    ("halacha", r"halach|mishnah berurah|basar|semicha|taaruvos|siddur"),
     ("yomtov", r"pesach|purim|chanuk|succos|sukkos|shavuos|rosh hashana|yom kippur|elul"),
     ("gemara", r"gemara|bekius"),
     ("machshava", r"machshava|moonlight|chassidus|nesivos|maharal|chovos|chovas|rav kook|mussar|chizuk|tehillim|pirkei avos|emuna"),
@@ -158,6 +158,7 @@ def main():
             "link": clean_link(p.get("permalink_url")),
             "artwork": artwork,
             "trackCount": p.get("track_count", len(tracks)),
+            "created": date_of(p.get("created_at")),
             "lastModified": date_of(p.get("last_modified")),
             "tracks": items,
         })
