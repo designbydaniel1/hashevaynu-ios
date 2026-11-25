@@ -94,40 +94,22 @@ private struct SectionRow: View {
     }
 }
 
-/// Speakers with their photos from hashevaynu.org.
+/// Speakers with their photos; each opens their own page.
 private struct SpeakersRow: View {
     let playlists: [Series]
-
-    private struct Speaker: Identifiable {
-        let name: String, photo: URL?, match: (Series) -> Bool, page: URL
-        var id: String { name }
-    }
-
-    private var speakers: [Speaker] {
-        let cdn = "https://images.squarespace-cdn.com/content/v1/5d6b53a89e0b8f0001645836/"
-        let isDov: (Series) -> Bool = { $0.name.localizedCaseInsensitiveContains("Dov Elias") }
-        return [
-            Speaker(name: "Rabbi Avi Zakutinsky", photo: URL(string: cdn + "1603762635352-UFOM3MG8PY7K2ZLZURSJ/image-asset.png?format=300w"),
-                    match: { !isDov($0) }, page: URL(string: "https://www.hashevaynu.org/rabbi-avi-zakutinsky")!),
-            Speaker(name: "Rabbi Yehuda Zakutinsky", photo: URL(string: cdn + "1603769255642-0LZHER1WJLK6ES2M3MXE/Rabbi%2BYehuda%2BZakutinsky.jpg?format=300w"),
-                    match: { $0.name.localizedCaseInsensitiveContains("Yehuda") }, page: URL(string: "https://www.hashevaynu.org/rabbi-yehuda-zakutinsky")!),
-            Speaker(name: "R’ Dov Elias", photo: URL(string: cdn + "1603752235869-ECL3D45EKEVEJ6FYXT2J/Dovi.png?format=300w"),
-                    match: isDov, page: URL(string: "https://www.hashevaynu.org/rav-dov-elias")!),
-        ]
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("By speaker").font(.title3.bold()).padding(.horizontal)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 18) {
-                    ForEach(speakers) { sp in
-                        let theirs = playlists.filter(sp.match)
-                        Group {
-                            if theirs.isEmpty {
-                                Link(destination: sp.page) { label(sp) }
-                            } else {
-                                NavigationLink(value: SeriesSection(title: sp.name, items: theirs)) { label(sp) }
+                    ForEach(Speaker.all) { sp in
+                        NavigationLink { SpeakerView(speaker: sp) } label: {
+                            VStack(spacing: 8) {
+                                AsyncImage(url: sp.photo) { $0.resizable().scaledToFill() } placeholder: { Color.secondary.opacity(0.2) }
+                                    .frame(width: 88, height: 88)
+                                    .clipShape(Circle())
+                                Text(sp.name).font(.caption.weight(.semibold)).multilineTextAlignment(.center).frame(width: 96)
                             }
                         }
                         .buttonStyle(.plain)
@@ -135,15 +117,6 @@ private struct SpeakersRow: View {
                 }
                 .padding(.horizontal)
             }
-        }
-    }
-
-    private func label(_ sp: Speaker) -> some View {
-        VStack(spacing: 8) {
-            AsyncImage(url: sp.photo) { $0.resizable().scaledToFill() } placeholder: { Color.secondary.opacity(0.2) }
-                .frame(width: 88, height: 88)
-                .clipShape(Circle())
-            Text(sp.name).font(.caption.weight(.semibold)).multilineTextAlignment(.center).frame(width: 96)
         }
     }
 }
