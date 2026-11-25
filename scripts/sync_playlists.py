@@ -7,6 +7,7 @@ Uses only the Python standard library.
 """
 import base64
 import json
+import re
 import os
 import sys
 import time
@@ -78,6 +79,36 @@ def big_artwork(url):
     return url.replace("-large.", "-t500x500.") if url else None
 
 
+# Sections for the Series tab, in display order, with the colour used for designed tiles.
+CATEGORIES = [
+    ("daf", "Daf Yomi", "#1D4E89"),
+    ("halacha", "Halacha", "#0F6B5C"),
+    ("machshava", "Machshava & Mussar", "#4C3A8C"),
+    ("gemara", "Gemara", "#1F5F8B"),
+    ("yomtov", "Yomim Tovim", "#8A4B12"),
+    ("more", "More", "#475569"),
+]
+CATEGORY_WORDS = [
+    ("halacha", r"halach|mishnah berurah|basar|semicha|taaruvos"),
+    ("yomtov", r"pesach|purim|chanuk|succos|sukkos|shavuos|rosh hashana|yom kippur|elul"),
+    ("gemara", r"gemara|bekius"),
+    ("machshava", r"machshava|moonlight|chassidus|nesivos|maharal|chovos|chovas|rav kook|mussar|chizuk|tehillim|pirkei avos|emuna"),
+]
+DAF = re.compile(r"^(\d+)\.\s*Daf Yomi\s*[-–:]\s*(.+)$", re.I)
+
+
+def describe(title):
+    """Section, short name, tile badge and colour for a playlist title."""
+    m = DAF.match(title)
+    if m:
+        return {"category": "daf", "order": int(m.group(1)), "short": m.group(2).strip(), "badge": m.group(1)}
+    low = title.lower()
+    cat = next((c for c, words in CATEGORY_WORDS if re.search(words, low)), "more")
+    words = [w for w in re.split(r"[^A-Za-z']+", title) if w and w.lower() not in {"of", "the", "with", "and", "r", "r'", "rabbi", "dov", "elias", "zakutinsky", "minute"} and not w.isdigit()]
+    badge = (words[0][0] + (words[1][0] if len(words) > 1 else words[0][1:2])).upper() if words else "HS"
+    return {"category": cat, "order": 0, "short": title, "badge": badge}
+
+
 def clean_link(url):
     """Drop SoundCloud's tracking parameters (?utm_...) from share links."""
     return urllib.parse.urlsplit(url)._replace(query="", fragment="").geturl() if url else None
@@ -115,10 +146,15 @@ def main():
             # Older API shape: tracks come embedded in the playlist itself.
             tracks = request(f"{API}/playlists/{pid}?show_tracks=true", auth).get("tracks", [])
         items = [track_json(t, user_permalink) for t in tracks if t.get("id")]
-        artwork = big_artwork(p.get("artwork_url")) or next((t["artwork"] for t in items if t["artwork"]), None) or avatar
+        # Only real artwork; the app draws a designed tile when there is none.
+        artwork = big_artwork(p.get("artwork_url")) or next((t["artwork"] for t in items if t["artwork"]), None)
+        title = (p.get("title") or "").strip()
+        info = describe(title)
         playlists.append({
             "id": str(pid),
-            "title": (p.get("title") or "").strip(),
+            "title": title,
+            **info,
+            "color": next(c for k, _, c in CATEGORIES if k == info["category"]),
             "link": clean_link(p.get("permalink_url")),
             "artwork": artwork,
             "trackCount": p.get("track_count", len(tracks)),
@@ -127,7 +163,10 @@ def main():
         })
         print(f"  {p.get('title')}: {len(tracks)} tracks")
 
-    result = {"source": "SoundCloud API", "user": user.get("username"), "avatar": avatar, "playlists": playlists}
+    # Daf Yomi newest masechta first; other sections by most recently updated.
+    playlists.sort(key=lambda p: ([k for k, _, _ in CATEGORIES].index(p["category"]), -p["order"], "" if not p["lastModified"] else "~" + "".join(chr(255 - ord(ch)) for ch in p["lastModified"])))
+    result = {"source": "SoundCloud API", "user": user.get("username"), "avatar": avatar,
+              "categories": [{"id": k, "title": t, "color": c} for k, t, c in CATEGORIES], "playlists": playlists}
     old = None
     if OUT.exists():
         old = json.loads(OUT.read_text())
