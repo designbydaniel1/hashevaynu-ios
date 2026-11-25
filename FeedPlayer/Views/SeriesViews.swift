@@ -2,18 +2,26 @@ import SwiftUI
 
 struct SeriesListView: View {
     @Environment(FeedStore.self) private var feed
+    @Environment(PlaylistStore.self) private var playlists
 
     var body: some View {
-        let series = SeriesCatalog.build(from: feed.podcast?.episodes ?? [])
+        // Real SoundCloud playlists once synced; grouping by title until then.
+        let series = playlists.playlists.isEmpty
+            ? SeriesCatalog.build(from: feed.podcast?.episodes ?? [])
+            : playlists.playlists
         NavigationStack {
             List(series) { s in
                 NavigationLink(value: s) {
                     HStack(spacing: 14) {
-                        Image(systemName: s.symbol)
-                            .font(.title2)
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 48, height: 48)
-                            .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
+                        if let art = s.artworkURL {
+                            Artwork(url: art, size: 56)
+                        } else {
+                            Image(systemName: s.symbol)
+                                .font(.title2)
+                                .foregroundStyle(Color.accentColor)
+                                .frame(width: 56, height: 56)
+                                .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
+                        }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(s.name).font(.headline)
                             Text(s.subtitle).font(.subheadline).foregroundStyle(.secondary)

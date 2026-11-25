@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @Environment(FeedStore.self) private var feed
+    @Environment(PlaylistStore.self) private var playlists
 
     var body: some View {
         TabView {
@@ -16,6 +17,7 @@ struct RootView: View {
         }
         .overlay { ToastOverlay() }
         .task { await feed.refresh() }
+        .task { await playlists.refresh() }
     }
 }
 

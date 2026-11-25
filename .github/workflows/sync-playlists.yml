@@ -1,0 +1,39 @@
+name: Sync SoundCloud playlists
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"   # every 6 hours, so new uploads show up the same day
+  workflow_dispatch:          # lets you run it any time from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-playlists
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch playlists from SoundCloud
+        env:
+          SOUNDCLOUD_CLIENT_ID: ${{ secrets.SOUNDCLOUD_CLIENT_ID }}
+          SOUNDCLOUD_CLIENT_SECRET: ${{ secrets.SOUNDCLOUD_CLIENT_SECRET }}
+        run: python scripts/sync_playlists.py
+      - name: Save changes
+        run: |
+          git config user.name "hashevaynu-sync"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/playlists.json
+          if git diff --cached --quiet; then
+            echo "Nothing new."
+          else
+            git commit -m "Update SoundCloud playlists"
+            git push
+          fi

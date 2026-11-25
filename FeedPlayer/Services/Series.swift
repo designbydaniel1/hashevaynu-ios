@@ -10,6 +10,8 @@ struct Series: Identifiable, Hashable {
     var subtitle: String
     var symbol: String
     var episodes: [Episode]
+    /// Playlist thumbnail from SoundCloud, when available.
+    var artworkURL: URL? = nil
 }
 
 enum SeriesCatalog {
