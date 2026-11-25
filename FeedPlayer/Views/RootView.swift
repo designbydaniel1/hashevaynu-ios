@@ -3,18 +3,25 @@ import SwiftUI
 struct RootView: View {
     @Environment(FeedStore.self) private var feed
     @Environment(PlaylistStore.self) private var playlists
+    @State private var nav = AppNavigation()
 
     var body: some View {
-        TabView {
+        @Bindable var nav = nav
+        TabView(selection: $nav.tab) {
             LatestView()
                 .tabItem { Label("Shiurim", systemImage: "waveform") }
+                .tag(AppNavigation.Tab.shiurim)
             SeriesListView()
                 .tabItem { Label("Series", systemImage: "square.stack") }
+                .tag(AppNavigation.Tab.series)
             SavedView()
                 .tabItem { Label("Saved", systemImage: "bookmark") }
+                .tag(AppNavigation.Tab.saved)
             MoreView()
                 .tabItem { Label("More", systemImage: "ellipsis.circle") }
+                .tag(AppNavigation.Tab.more)
         }
+        .environment(nav)
         .overlay { ToastOverlay() }
         .task { await feed.refresh() }
         .task { await playlists.refresh() }
