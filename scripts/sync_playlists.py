@@ -78,13 +78,20 @@ def big_artwork(url):
     return url.replace("-large.", "-t500x500.") if url else None
 
 
+def clean_link(url):
+    """Drop SoundCloud's tracking parameters (?utm_...) from share links."""
+    return urllib.parse.urlsplit(url)._replace(query="", fragment="").geturl() if url else None
+
+
 def track_json(t, user_permalink):
     tid = t.get("id")
-    permalink = t.get("permalink") or ""
+    link = clean_link(t.get("permalink_url"))
+    # The API often leaves out "permalink"; it is the last part of the track's web link.
+    permalink = t.get("permalink") or (urllib.parse.urlsplit(link).path.rstrip("/").split("/")[-1] if link else "")
     return {
         "id": str(tid),
         "title": (t.get("title") or "").strip(),
-        "link": t.get("permalink_url"),
+        "link": link,
         "date": date_of(t.get("created_at")),
         "duration": round((t.get("duration") or 0) / 1000),
         # Same stream address the podcast feed uses, so the app can play older shiurim too.
@@ -97,6 +104,7 @@ def main():
     auth = {"Authorization": f"OAuth {get_token()}"}
     user = request(f"{API}/users/{USER_ID}", auth)
     user_permalink = user.get("permalink") or "user-964674366-190790323"
+    avatar = big_artwork(user.get("avatar_url"))
 
     playlists = []
     for p in paged(f"{API}/users/{USER_ID}/playlists?linked_partitioning=true&limit=50&show_tracks=false", auth):
@@ -107,11 +115,11 @@ def main():
             # Older API shape: tracks come embedded in the playlist itself.
             tracks = request(f"{API}/playlists/{pid}?show_tracks=true", auth).get("tracks", [])
         items = [track_json(t, user_permalink) for t in tracks if t.get("id")]
-        artwork = big_artwork(p.get("artwork_url")) or next((t["artwork"] for t in items if t["artwork"]), None)
+        artwork = big_artwork(p.get("artwork_url")) or next((t["artwork"] for t in items if t["artwork"]), None) or avatar
         playlists.append({
             "id": str(pid),
             "title": (p.get("title") or "").strip(),
-            "link": p.get("permalink_url"),
+            "link": clean_link(p.get("permalink_url")),
             "artwork": artwork,
             "trackCount": p.get("track_count", len(tracks)),
             "lastModified": date_of(p.get("last_modified")),
@@ -119,7 +127,7 @@ def main():
         })
         print(f"  {p.get('title')}: {len(tracks)} tracks")
 
-    result = {"source": "SoundCloud API", "user": user.get("username"), "playlists": playlists}
+    result = {"source": "SoundCloud API", "user": user.get("username"), "avatar": avatar, "playlists": playlists}
     old = None
     if OUT.exists():
         old = json.loads(OUT.read_text())
