@@ -12,9 +12,12 @@ struct SeriesListView: View {
                     fallback
                 } else {
                     LazyVStack(alignment: .leading, spacing: 26) {
-                        ForEach(playlists.sections) { section in
+                        SectionRow(title: "Featured", items: featured, large: true)
+                        // Daf Yomi masechtos live on the Daf tab.
+                        ForEach(playlists.sections.filter { $0.id != "daf" }) { section in
                             SectionRow(title: section.title, items: section.playlists)
                         }
+                        SpeakersRow(playlists: playlists.playlists)
                     }
                     .padding(.vertical, 8)
                 }
@@ -25,6 +28,11 @@ struct SeriesListView: View {
             .refreshable { await playlists.refresh() }
             .withMiniPlayer()
         }
+    }
+
+    /// The 5 most recently published playlists, not counting Daf Yomi.
+    private var featured: [Series] {
+        Array(playlists.playlists.filter { $0.category != "daf" }.sorted { $0.created > $1.created }.prefix(5))
     }
 
     private var fallback: some View {
@@ -60,6 +68,7 @@ struct SeriesSection: Hashable {
 private struct SectionRow: View {
     let title: String
     let items: [Series]
+    var large = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -67,7 +76,7 @@ private struct SectionRow: View {
                 Text(title).font(.title3.bold())
                 Text("\(items.count)").font(.subheadline).foregroundStyle(.secondary)
                 Spacer()
-                if items.count > 3 {
+                if items.count > 3 && !large {
                     NavigationLink("See all", value: SeriesSection(title: title, items: items))
                         .font(.subheadline.weight(.semibold))
                 }
@@ -76,11 +85,65 @@ private struct SectionRow: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 12) {
                     ForEach(items) { s in
-                        NavigationLink(value: s) { PlaylistCard(series: s) }.buttonStyle(.plain)
+                        NavigationLink(value: s) { PlaylistCard(series: s, width: large ? 220 : 140) }.buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal)
             }
+        }
+    }
+}
+
+/// Speakers with their photos from hashevaynu.org.
+private struct SpeakersRow: View {
+    let playlists: [Series]
+
+    private struct Speaker: Identifiable {
+        let name: String, photo: URL?, match: (Series) -> Bool, page: URL
+        var id: String { name }
+    }
+
+    private var speakers: [Speaker] {
+        let cdn = "https://images.squarespace-cdn.com/content/v1/5d6b53a89e0b8f0001645836/"
+        let isDov: (Series) -> Bool = { $0.name.localizedCaseInsensitiveContains("Dov Elias") }
+        return [
+            Speaker(name: "Rabbi Avi Zakutinsky", photo: URL(string: cdn + "1603762635352-UFOM3MG8PY7K2ZLZURSJ/image-asset.png?format=300w"),
+                    match: { !isDov($0) }, page: URL(string: "https://www.hashevaynu.org/rabbi-avi-zakutinsky")!),
+            Speaker(name: "Rabbi Yehuda Zakutinsky", photo: URL(string: cdn + "1603769255642-0LZHER1WJLK6ES2M3MXE/Rabbi%2BYehuda%2BZakutinsky.jpg?format=300w"),
+                    match: { $0.name.localizedCaseInsensitiveContains("Yehuda") }, page: URL(string: "https://www.hashevaynu.org/rabbi-yehuda-zakutinsky")!),
+            Speaker(name: "R’ Dov Elias", photo: URL(string: cdn + "1603752235869-ECL3D45EKEVEJ6FYXT2J/Dovi.png?format=300w"),
+                    match: isDov, page: URL(string: "https://www.hashevaynu.org/rav-dov-elias")!),
+        ]
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("By speaker").font(.title3.bold()).padding(.horizontal)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .top, spacing: 18) {
+                    ForEach(speakers) { sp in
+                        let theirs = playlists.filter(sp.match)
+                        Group {
+                            if theirs.isEmpty {
+                                Link(destination: sp.page) { label(sp) }
+                            } else {
+                                NavigationLink(value: SeriesSection(title: sp.name, items: theirs)) { label(sp) }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+
+    private func label(_ sp: Speaker) -> some View {
+        VStack(spacing: 8) {
+            AsyncImage(url: sp.photo) { $0.resizable().scaledToFill() } placeholder: { Color.secondary.opacity(0.2) }
+                .frame(width: 88, height: 88)
+                .clipShape(Circle())
+            Text(sp.name).font(.caption.weight(.semibold)).multilineTextAlignment(.center).frame(width: 96)
         }
     }
 }

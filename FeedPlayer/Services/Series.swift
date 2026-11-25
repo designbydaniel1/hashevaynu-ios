@@ -19,6 +19,8 @@ struct Series: Identifiable, Hashable {
     var tint: String? = nil
     /// Shorter title for tiles, e.g. "Eirachin" for "33. Daf Yomi- Eirachin".
     var shortName: String = ""
+    /// When the playlist was published (yyyy-MM-dd), for Featured.
+    var created: String = ""
 }
 
 enum SeriesCatalog {

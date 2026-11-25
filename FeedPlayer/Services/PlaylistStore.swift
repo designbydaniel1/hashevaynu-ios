@@ -48,7 +48,7 @@ final class PlaylistStore {
     private struct Category: Decodable { let id: String, title: String }
     private struct Playlist: Decodable {
         let id: String, title: String, link: URL?, artwork: URL?, trackCount: Int?
-        let category: String?, short: String?, badge: String?, color: String?
+        let category: String?, short: String?, badge: String?, color: String?, created: String?
         let tracks: [Track]
     }
     private struct Track: Decodable {
@@ -82,7 +82,7 @@ final class PlaylistStore {
             return Series(name: p.title, subtitle: "\(count) shiurim", symbol: "music.note.list",
                           episodes: episodes, artworkURL: p.artwork,
                           category: p.category ?? "more", badge: p.badge ?? "", tint: p.color,
-                          shortName: p.short ?? p.title)
+                          shortName: p.short ?? p.title, created: p.created ?? "")
         }
         return (playlists, categories.isEmpty ? [("more", "Playlists")] : categories)
     }
