@@ -26998,7 +26998,7 @@
    "color": "#1D4E89",
    "link": "https://soundcloud.com/user-964674366-190790323/sets/33-daf-yomi-eirachin",
    "artwork": "https://i1.sndcdn.com/artworks-hv7Es92ia6sxUEk9-ugKs1A-t500x500.jpg",
-   "trackCount": 7,
+   "trackCount": 8,
    "created": "2026-11-19",
    "lastModified": "2026-11-26",
    "tracks": [
@@ -27063,6 +27063,15 @@
      "date": "2026-11-25",
      "duration": 1894,
      "audio": "https://feeds.soundcloud.com/stream/2444513940-user-964674366-190790323-eirachin-8a-8b-daf-yomi.mp3",
+     "artwork": null
+    },
+    {
+     "id": "2445226158",
+     "title": "Eirachin 9a-9b (Daf Yomi)",
+     "link": "https://soundcloud.com/user-964674366-190790323/eirachin-9a-9b-daf-yomi",
+     "date": "2026-11-26",
+     "duration": 1446,
+     "audio": "https://feeds.soundcloud.com/stream/2445226158-user-964674366-190790323-eirachin-9a-9b-daf-yomi.mp3",
      "artwork": null
     }
    ]
@@ -50134,5 +50143,5 @@
    ]
   }
  ],
- "updated": "2026-11-26T03:04:14Z"
+ "updated": "2026-11-26T19:28:26Z"
 }
