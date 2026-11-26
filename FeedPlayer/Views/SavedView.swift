@@ -6,7 +6,7 @@ struct SavedView: View {
 
     var body: some View {
         NavigationStack {
-            List(library.saved) { EpisodeRow(episode: $0) }
+            List(library.saved) { EpisodeRow(episode: $0).listRowBackground(Color.clear) }
                 .listStyle(.plain)
                 .navigationTitle("Saved")
                 .refreshable { await feed.refresh() }

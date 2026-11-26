@@ -22,7 +22,7 @@ struct LatestView: View {
                 if let p = feed.podcast, search.isEmpty {
                     header(p).listRowSeparator(.hidden)
                 }
-                ForEach(episodes) { EpisodeRow(episode: $0) }
+                ForEach(episodes) { EpisodeRow(episode: $0).listRowBackground(Color.clear) }
                 if search.isEmpty && !episodes.isEmpty {
                     caughtUp.listRowSeparator(.hidden)
                 }

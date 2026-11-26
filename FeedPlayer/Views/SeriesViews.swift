@@ -134,6 +134,7 @@ struct SeriesSectionView: View {
             .padding()
         }
         .navigationTitle(section.title)
+        .appBackground()
     }
 }
 
@@ -194,8 +195,9 @@ struct SeriesDetailView: View {
 
     var body: some View {
         let eps = oldestFirst ? Array(series.episodes.reversed()) : series.episodes
-        List(eps) { EpisodeRow(episode: $0) }
+        List(eps) { EpisodeRow(episode: $0).listRowBackground(Color.clear) }
             .listStyle(.plain)
+            .appBackground()
             .navigationTitle(series.shortName.isEmpty ? series.name : series.shortName)
             .toolbar {
                 Menu {

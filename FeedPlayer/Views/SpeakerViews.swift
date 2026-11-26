@@ -115,6 +115,7 @@ struct SpeakerView: View {
         }
         .navigationTitle(speaker.name)
         .navigationBarTitleDisplayMode(.inline)
+        .appBackground()
     }
 
     private func row(_ title: String, _ items: [Series], width: CGFloat) -> some View {

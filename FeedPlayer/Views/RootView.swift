@@ -3,7 +3,9 @@ import SwiftUI
 struct RootView: View {
     @Environment(FeedStore.self) private var feed
     @Environment(PlaylistStore.self) private var playlists
+    @Environment(AudioPlayer.self) private var player
     @State private var nav = AppNavigation()
+    @State private var showPlayer = false
 
     var body: some View {
         @Bindable var nav = nav
@@ -21,6 +23,9 @@ struct RootView: View {
                 .tabItem { Label("More", systemImage: "ellipsis.circle") }
                 .tag(AppNavigation.Tab.more)
         }
+        .tint(Color.accentColor)
+        .modifier(GlassTabBar(showPlayer: $showPlayer))
+        .sheet(isPresented: $showPlayer) { PlayerView() }
         .environment(nav)
         .overlay { ToastOverlay() }
         .task { await feed.refresh() }
@@ -35,12 +40,44 @@ struct RootView: View {
     }
 }
 
-/// Adds the mini player above the tab bar and opens the full player when tapped.
+/// On iOS 26 the tab bar is Liquid Glass: it shrinks while scrolling down,
+/// and the mini player rides in its bottom accessory slot.
+private struct GlassTabBar: ViewModifier {
+    @Environment(AudioPlayer.self) private var player
+    @Binding var showPlayer: Bool
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content
+                .tabBarMinimizeBehavior(.onScrollDown)
+                .tabViewBottomAccessory {
+                    if player.current != nil {
+                        MiniPlayerView(style: .accessory)
+                            .contentShape(Rectangle())
+                            .onTapGesture { showPlayer = true }
+                    }
+                }
+        } else {
+            content
+        }
+    }
+}
+
+/// The off-white background on each tab, plus (before iOS 26) a floating glass
+/// mini player above the tab bar that opens the full player when tapped.
 struct MiniPlayerHost: ViewModifier {
     @Environment(AudioPlayer.self) private var player
     @State private var showPlayer = false
 
     func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.appBackground()
+        } else {
+            legacy(content.appBackground())
+        }
+    }
+
+    private func legacy(_ content: some View) -> some View {
         content
             .safeAreaInset(edge: .bottom) {
                 ZStack {
