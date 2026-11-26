@@ -11515,9 +11515,9 @@
    "color": "#0F6B5C",
    "link": "https://soundcloud.com/user-964674366-190790323/sets/halacha-mishnah-berurah-volume",
    "artwork": null,
-   "trackCount": 173,
+   "trackCount": 175,
    "created": "2025-12-16",
-   "lastModified": "2026-11-24",
+   "lastModified": "2026-11-25",
    "tracks": [
     {
      "id": "2230943366",
@@ -13074,6 +13074,24 @@
      "date": "2026-11-24",
      "duration": 379,
      "audio": "https://feeds.soundcloud.com/stream/2444060409-user-964674366-190790323-mishnah-berurah-yomi-582502914.mp3",
+     "artwork": null
+    },
+    {
+     "id": "2444802483",
+     "title": "Mishnah Berurah Yomi: Siman 72",
+     "link": "https://soundcloud.com/user-964674366-190790323/mishnah-berurah-yomi-siman-72",
+     "date": "2026-11-25",
+     "duration": 367,
+     "audio": "https://feeds.soundcloud.com/stream/2444802483-user-964674366-190790323-mishnah-berurah-yomi-siman-72.mp3",
+     "artwork": null
+    },
+    {
+     "id": "2444805987",
+     "title": "Mishnah Berurah Yomi: Siman 73",
+     "link": "https://soundcloud.com/user-964674366-190790323/mishnah-berurah-yomi-siman-73",
+     "date": "2026-11-25",
+     "duration": 260,
+     "audio": "https://feeds.soundcloud.com/stream/2444805987-user-964674366-190790323-mishnah-berurah-yomi-siman-73.mp3",
      "artwork": null
     }
    ]
@@ -50116,5 +50134,5 @@
    ]
   }
  ],
- "updated": "2026-11-25T17:42:31Z"
+ "updated": "2026-11-26T01:46:41Z"
 }
