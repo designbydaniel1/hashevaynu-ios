@@ -1,0 +1,34 @@
+# playlist_id image title
+961262821 artwork/daf/01-brachos.jpg 1. Daf Yomi - Brachos
+1013209342 artwork/daf/02-shabbos.jpg 2. Daf Yomi - Shabbos
+1108537003 artwork/daf/03-eiruvin.jpg 3. Daf Yomi- Eiruvin
+1167310087 artwork/daf/04-pesachim.jpg 4. Daf Yomi- Pesachim
+1230422077 artwork/daf/05-shekalim.jpg 5. Daf Yomi- Shekalim
+1242045166 artwork/daf/06-yoma.jpg 6. Daf Yomi- Yoma
+1284318724 artwork/daf/07-succah.jpg 7. Daf Yomi- Succah
+1310525242 artwork/daf/08-beitzah.jpg 8. Daf Yomi- Beitzah
+1329604477 artwork/daf/09-rosh-hashana.jpg 9. Daf Yomi- Rosh Hashana
+1347035878 artwork/daf/10-taanis.jpg 10. Daf Yomi- Taanis
+1362666358 artwork/daf/11-megillah.jpg 11. Daf Yomi- Megillah
+1379390371 artwork/daf/12-moed-katan.jpg 12. Daf Yomi- Moed Katan
+1393341508 artwork/daf/13-chagigah.jpg 13. Daf Yomi- Chagigah
+1407015349 artwork/daf/14-yevamos.jpg 14. Daf Yomi- Yevamos
+1465441567 artwork/daf/15-kesubos.jpg 15. Daf Yomi- Kesubos
+1518480079 artwork/daf/16-nedarim.jpg 16. Daf Yomi- Nedarim
+1559781763 artwork/daf/17-nazir.jpg 17. Daf Yomi- Nazir
+1593896326 artwork/daf/18-sota.jpg 18. Daf Yomi- Sota
+1623989275 artwork/daf/19-gittin.jpg 19. Daf Yomi- Gittin
+1672399824 artwork/daf/20-kiddushin.jpg 20. Daf Yomi- Kiddushin
+1715955978 artwork/daf/21-baba-kamma.jpg 21. Daf Yomi- Baba Kamma
+1784987460 artwork/daf/22-baba-metziah.jpg 22. Daf Yomi- Baba Metziah
+1842442083 artwork/daf/23-bava-basra.jpg 23. Daf Yomi- Bava Basra
+1927395111 artwork/daf/24-sanhedrin.jpg 24. Daf Yomi- Sanhedrin
+2003007268 artwork/daf/25-makkos.jpg 25. Daf Yomi- Makkos
+2014516665 artwork/daf/26-shavuos.jpg 26. Daf Yomi- Shavuos
+2039793912 artwork/daf/27-avodah-zara.jpg 27. Daf Yomi- Avodah Zara
+2075475204 artwork/daf/28-horayos.jpg 28. Daf Yomi- Horayos
+2081385675 artwork/daf/29-zevachim.jpg 29. Daf Yomi- Zevachim
+2173894355 artwork/daf/30-menachos.jpg 30. Daf Yomi- Menachos
+2230621079 artwork/daf/31-chullin.jpg 31. Daf Yomi- Chullin
+2301217212 artwork/daf/32-bechoros.jpg 32. Daf Yomi- Bechoros
+2331835179 artwork/daf/33-eirachin.jpg 33. Daf Yomi- Eirachin

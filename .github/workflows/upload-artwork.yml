@@ -11,12 +11,15 @@ on:
       code_verifier:
         description: "PKCE verifier that matches the sign-in link"
         required: true
+      manifest:
+        description: "List of playlists and images, e.g. artwork/daf/manifest.txt"
+        required: false
       playlist_id:
-        description: "SoundCloud playlist id"
-        required: true
+        description: "Or a single SoundCloud playlist id"
+        required: false
       image:
-        description: "Image path in this repo, e.g. artwork/daf/33-eirachin.jpg"
-        required: true
+        description: "And its image path, e.g. artwork/daf/33-eirachin.jpg"
+        required: false
 
 permissions:
   contents: read
@@ -32,13 +35,13 @@ jobs:
           CLIENT_SECRET: ${{ secrets.SOUNDCLOUD_CLIENT_SECRET }}
           CODE: ${{ inputs.code }}
           VERIFIER: ${{ inputs.code_verifier }}
+          MANIFEST: ${{ inputs.manifest }}
           PLAYLIST: ${{ inputs.playlist_id }}
           IMAGE: ${{ inputs.image }}
         run: |
           set -euo pipefail
           echo "::add-mask::$CODE"
           echo "::add-mask::$VERIFIER"
-          test -f "$IMAGE" || { echo "Image not found: $IMAGE"; exit 1; }
           exchange() {  # $1 = how to send the app keys: body or header
             if [ "$1" = body ]; then AUTH=(--data-urlencode "client_secret=$CLIENT_SECRET" -d "client_id=$CLIENT_ID"); else AUTH=(-u "$CLIENT_ID:$CLIENT_SECRET"); fi
             curl -sS "${AUTH[@]}" -d grant_type=authorization_code \
@@ -51,10 +54,17 @@ jobs:
           if [ -z "$TOKEN" ]; then echo "Keys in body: $(echo "$TOKEN_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('error','unknown'))")"; TOKEN_JSON=$(exchange header); TOKEN=$(echo "$TOKEN_JSON" | token_of); fi
           if [ -z "$TOKEN" ]; then echo "Sign-in code was not accepted: $(echo "$TOKEN_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('error','unknown'))")"; exit 1; fi
           echo "::add-mask::$TOKEN"
-          STATUS=$(curl -sS -o result.json -w '%{http_code}' -X PUT \
-            -H "Authorization: OAuth $TOKEN" -H "Accept: application/json" \
-            -F "playlist[artwork_data]=@$IMAGE" \
-            "https://api.soundcloud.com/playlists/$PLAYLIST")
-          echo "SoundCloud answered HTTP $STATUS"
-          python3 -c "import json; d=json.load(open('result.json')); print('Playlist:', d.get('title')); print('Artwork:', d.get('artwork_url'))" || head -c 300 result.json
-          [ "$STATUS" -lt 300 ]
+          if [ -n "$MANIFEST" ]; then grep -v '^#' "$MANIFEST" > jobs.txt; else echo "$PLAYLIST $IMAGE" > jobs.txt; fi
+          OK=0; FAILED=0
+          while read -r PID IMG TITLE; do
+            [ -n "$PID" ] || continue
+            if [ ! -f "$IMG" ]; then echo "MISSING  $IMG"; FAILED=$((FAILED+1)); continue; fi
+            STATUS=$(curl -sS -o result.json -w '%{http_code}' -X PUT \
+              -H "Authorization: OAuth $TOKEN" -H "Accept: application/json" \
+              -F "playlist[artwork_data]=@$IMG" \
+              "https://api.soundcloud.com/playlists/$PID")
+            if [ "$STATUS" -lt 300 ]; then echo "OK       $TITLE"; OK=$((OK+1)); else echo "FAILED   $TITLE (HTTP $STATUS)"; FAILED=$((FAILED+1)); fi
+            sleep 1
+          done < jobs.txt
+          echo "Uploaded $OK, failed $FAILED"
+          [ "$FAILED" -eq 0 ]
