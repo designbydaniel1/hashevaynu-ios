@@ -1,0 +1,12 @@
+# playlist_id image title
+1770423330 artwork/series/maharal.jpg Maharal- Netzach Yisroel
+2159430767 artwork/series/vani-tamid-imach.jpg 5 Minute Machshava- V'Ani Tamid Imach
+2072803881 artwork/series/chovos-halevovos.jpg 5 Minute Machshava- Chovos Halevovos
+1991877304 artwork/series/pirkei-avos.jpg Pirkei Avos - Rabbi Zakutinsky
+1941366103 artwork/series/machshava-moment.jpg Machshava Moment
+1907046427 artwork/series/mussar-avicha.jpg Rav Kook- Sefer Mussar Avicha
+2281441412 artwork/series/semicha.jpg Semicha Shiurim
+2159596484 artwork/series/mb-vol-1.jpg Halacha- Mishnah Berurah Volume 1
+1710837372 artwork/series/basar-bchalav.jpg Halacha- Basar B'Chalav & Taaruvos
+1710838524 artwork/series/hilchos-shabbos.jpg Halacha- MIshnah Berurah Hilchos Shabbos
+1991866704 artwork/series/gemara-bekius.jpg Gemara Bekius with Rabbi Zakutinsky
