@@ -39,12 +39,16 @@ jobs:
           echo "::add-mask::$CODE"
           echo "::add-mask::$VERIFIER"
           test -f "$IMAGE" || { echo "Image not found: $IMAGE"; exit 1; }
-          TOKEN_JSON=$(curl -sS -u "$CLIENT_ID:$CLIENT_SECRET" \
-            -d grant_type=authorization_code -d "client_id=$CLIENT_ID" \
-            --data-urlencode "redirect_uri=https://www.hashevaynu.org" \
-            --data-urlencode "code=$CODE" --data-urlencode "code_verifier=$VERIFIER" \
-            https://secure.soundcloud.com/oauth/token)
-          TOKEN=$(echo "$TOKEN_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))")
+          exchange() {  # $1 = how to send the app keys: body or header
+            if [ "$1" = body ]; then AUTH=(--data-urlencode "client_secret=$CLIENT_SECRET" -d "client_id=$CLIENT_ID"); else AUTH=(-u "$CLIENT_ID:$CLIENT_SECRET"); fi
+            curl -sS "${AUTH[@]}" -d grant_type=authorization_code \
+              --data-urlencode "redirect_uri=https://www.hashevaynu.org" \
+              --data-urlencode "code=$CODE" --data-urlencode "code_verifier=$VERIFIER" \
+              https://secure.soundcloud.com/oauth/token
+          }
+          token_of() { python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))"; }
+          TOKEN_JSON=$(exchange body); TOKEN=$(echo "$TOKEN_JSON" | token_of)
+          if [ -z "$TOKEN" ]; then echo "Keys in body: $(echo "$TOKEN_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('error','unknown'))")"; TOKEN_JSON=$(exchange header); TOKEN=$(echo "$TOKEN_JSON" | token_of); fi
           if [ -z "$TOKEN" ]; then echo "Sign-in code was not accepted: $(echo "$TOKEN_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin).get('error','unknown'))")"; exit 1; fi
           echo "::add-mask::$TOKEN"
           STATUS=$(curl -sS -o result.json -w '%{http_code}' -X PUT \
