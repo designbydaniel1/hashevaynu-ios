@@ -129,7 +129,7 @@ struct SaveButton: View {
             ZStack {
                 if burst > 0 { Particles(color: color).id(burst) }
                 SwapIcon(name: isSaved ? "bookmark.fill" : "bookmark")
-                    .foregroundStyle(isSaved ? color : Color.accentColor)
+                    .foregroundStyle(isSaved ? color : Color.appBlue)
                     // Pop: dip to 60%, then overshoot back to full size (350ms).
                     .keyframeAnimator(initialValue: 1.0, trigger: burst) { icon, scale in
                         icon.scaleEffect(scale)

@@ -65,7 +65,7 @@ struct LatestView: View {
             Image(systemName: "square.stack.fill")
                 .font(.title2).foregroundStyle(.white)
                 .frame(width: 48, height: 48)
-                .background(Color.accentColor, in: Circle())
+                .background(Color.appBlue, in: Circle())
             Text("You’re all caught up").font(.headline)
             Text(playlists.playlists.isEmpty
                  ? "That’s everything from the last 30 days. Browse every playlist for older shiurim."

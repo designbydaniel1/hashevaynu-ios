@@ -60,7 +60,7 @@ struct EpisodeRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(episode.title)
                     .font(.headline)
-                    .foregroundStyle(isCurrent ? Color.accentColor : .primary)
+                    .foregroundStyle(isCurrent ? Color.appBlue : .primary)
                     .lineLimit(2)
                 HStack(spacing: 6) {
                     if let d = episode.pubDate { Text(d, style: .date) }
@@ -78,7 +78,7 @@ struct EpisodeRow: View {
             Spacer()
             SwapIcon(name: isCurrent && player.isPlaying ? "waveform" : "play.circle")
                 .font(.title2)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.appBlue)
                 .symbolEffect(.variableColor.iterative, isActive: isCurrent && player.isPlaying)
         }
         .contentShape(Rectangle())
@@ -92,7 +92,7 @@ struct EpisodeRow: View {
                     .font(.caption2).foregroundStyle(.secondary)
                     .transition(.successCheck)
             } else {
-                ProgressView(value: p).tint(.accentColor).frame(maxWidth: 120)
+                ProgressView(value: p).tint(Color.appBlue).frame(maxWidth: 120)
             }
         }
     }

@@ -112,7 +112,7 @@ private struct RowLabel: View {
             Image(systemName: symbol)
                 .foregroundStyle(.white)
                 .frame(width: 30, height: 30)
-                .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 7))
+                .background(Color.appBlue, in: RoundedRectangle(cornerRadius: 7))
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).foregroundStyle(.primary)
                 if let detail { SwapText(detail).font(.caption).foregroundStyle(.secondary) }
