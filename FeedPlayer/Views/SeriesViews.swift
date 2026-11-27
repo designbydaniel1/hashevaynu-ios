@@ -173,7 +173,7 @@ struct PlaylistTile: View {
     }
 
     private var designed: some View {
-        let tint = Color(hex: series.tint) ?? .accentColor
+        let tint = Color(hex: series.tint) ?? Color.appBlue
         return ZStack(alignment: .bottomLeading) {
             tint
             VStack(alignment: .leading, spacing: 2) {

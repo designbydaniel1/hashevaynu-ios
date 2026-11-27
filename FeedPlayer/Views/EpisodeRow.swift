@@ -111,7 +111,7 @@ struct Artwork: View {
         } placeholder: {
             if let badge, url == nil {
                 ZStack {
-                    Color(hex: tint) ?? .accentColor
+                    Color(hex: tint) ?? Color.appBlue
                     Text(badge).font(.system(size: size * 0.32, weight: .heavy)).foregroundStyle(.white)
                 }
             } else {
