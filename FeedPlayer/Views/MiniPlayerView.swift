@@ -29,7 +29,7 @@ struct MiniPlayerView: View {
             .overlay(alignment: .bottom) {
                 // Thin progress line along the bottom edge.
                 GeometryReader { g in
-                    Capsule().fill(Color.accentColor)
+                    Capsule().fill(Color.appBlue)
                         .frame(width: max(0, (g.size.width - 44) * progress), height: 2.5)
                         .offset(x: 22, y: g.size.height - 2.5)
                 }

@@ -29,3 +29,11 @@ extension View {
         }
     }
 }
+
+extension Color {
+    /// Brand blue for links, the selected tab and progress. Passes WCAG AA (4.5:1)
+    /// on the off-white and dark backgrounds.
+    static let appBlue = Color(UIColor { $0.userInterfaceStyle == .dark
+        ? UIColor(red: 0x5F / 255, green: 0xA3 / 255, blue: 0xFF / 255, alpha: 1)
+        : UIColor(red: 0x00 / 255, green: 0x62 / 255, blue: 0xE4 / 255, alpha: 1) })
+}

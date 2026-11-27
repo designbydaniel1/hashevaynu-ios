@@ -23,7 +23,7 @@ struct RootView: View {
                 .tabItem { Label("More", systemImage: "ellipsis.circle") }
                 .tag(AppNavigation.Tab.more)
         }
-        .tint(Color.accentColor)
+        .tint(Color.appBlue)
         .modifier(GlassTabBar(showPlayer: $showPlayer))
         .sheet(isPresented: $showPlayer) { PlayerView() }
         .environment(nav)
