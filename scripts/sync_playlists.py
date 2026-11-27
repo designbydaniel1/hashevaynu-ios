@@ -64,11 +64,11 @@ def paged(url, auth):
         url = page.get("next_href")
 
 
-def date_of(value):
+def date_of(value, out="%Y-%m-%d"):
     # SoundCloud dates look like "2026/11/24 13:33:03 +0000" or ISO 8601.
     for fmt in ("%Y/%m/%d %H:%M:%S %z", "%Y-%m-%dT%H:%M:%SZ"):
         try:
-            return datetime.strptime(value, fmt).strftime("%Y-%m-%d")
+            return datetime.strptime(value, fmt).strftime(out)
         except (TypeError, ValueError):
             pass
     return None
@@ -124,6 +124,8 @@ def track_json(t, user_permalink):
         "title": (t.get("title") or "").strip(),
         "link": link,
         "date": date_of(t.get("created_at")),
+        # Exact upload time (UTC), to tell apart shiurim uploaded on the same day.
+        "uploaded": date_of(t.get("created_at"), "%Y-%m-%dT%H:%M:%SZ"),
         "duration": round((t.get("duration") or 0) / 1000),
         # Same stream address the podcast feed uses, so the app can play older shiurim too.
         "audio": f"https://feeds.soundcloud.com/stream/{tid}-{user_permalink}-{permalink}.mp3" if permalink else None,
